@@ -5,6 +5,6 @@ Alt i skal gøre ved kloning af repoet:
 3: Skriv python -m venv .venv i terminalen
 4: Derefter Ctrl + Shift + P -> Python: Select Intrepeter -> Python 3.14.7
 5: skriv .\.venv\Scripts\Activate.ps1 i terminalen
-5: Og til sidst .\.venv\Scripts\python.exe -m pip install -r requirements.txt i terminalen
+6: Og til sidst .\.venv\Scripts\python.exe -m pip install -r requirements.txt i terminalen
 
 Miljøet er klart
