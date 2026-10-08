@@ -7,10 +7,19 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, ConfigDict
 
 from config import OPENROUTER_MODEL
+from dispatcher import Dispatcher
 from orchestrator import create_plan
+from research_agent import run_research
 
 
 app = FastAPI()
+
+
+dispatcher = Dispatcher(
+    handlers={
+        "research": run_research,
+    }
+)
 
 
 class ChatMessage(BaseModel):
@@ -74,8 +83,19 @@ async def chat_completions(
         messages=conversation,
     )
 
-    content = plan.model_dump_json(
-        indent=2,
+    try:
+        results = await dispatcher.dispatch(
+            plan
+        )
+    except RuntimeError as exc:
+        raise HTTPException(
+            status_code=501,
+            detail=str(exc),
+        ) from exc
+
+    content = "\n\n".join(
+        result.output
+        for result in results
     )
 
     completion_id = f"chatcmpl-{uuid.uuid4().hex}"
