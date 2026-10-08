@@ -6,10 +6,6 @@ from pydantic import BaseModel, ConfigDict
 from config import orchestrator_model
 
 
-# -------------------------------------------------------------------
-# Structured output
-# -------------------------------------------------------------------
-
 class OrchestrationTask(BaseModel):
     step: int
     target: Literal["research", "calendar"]
@@ -23,10 +19,6 @@ class OrchestrationPlan(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-
-# -------------------------------------------------------------------
-# Orchestrator instructions
-# -------------------------------------------------------------------
 
 ORCHESTRATOR_INSTRUCTIONS = """
 You are the orchestration component of an AI assistant.
@@ -59,10 +51,6 @@ ORCHESTRATION RULES
 """
 
 
-# -------------------------------------------------------------------
-# Orchestrator
-# -------------------------------------------------------------------
-
 orchestrator = Agent(
     name="Orchestrator",
     instructions=ORCHESTRATOR_INSTRUCTIONS,
@@ -71,9 +59,16 @@ orchestrator = Agent(
 )
 
 
-# -------------------------------------------------------------------
-# Temporary local test
-# -------------------------------------------------------------------
+async def create_plan(
+    messages: list[dict],
+) -> OrchestrationPlan:
+    result = await Runner.run(
+        orchestrator,
+        input=messages,
+    )
+
+    return result.final_output
+
 
 if __name__ == "__main__":
     user_input = input("User request: ")
