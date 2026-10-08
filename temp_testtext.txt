@@ -1,0 +1,1 @@
+curl -H 'Content-Type: application/json' -d '{"model":"openrouter/free","messages":[{"role":"user","content":"Research LangChain create_agent"}]}' http://127.0.0.1:8000/v1/chat/completions
