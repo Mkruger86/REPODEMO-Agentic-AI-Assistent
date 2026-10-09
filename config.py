@@ -7,7 +7,7 @@ from agents import OpenAIChatCompletionsModel, set_tracing_disabled
 OPENROUTER_API_KEY = os.environ["OPENROUTER_API_KEY"]
 
 OPENROUTER_MODEL = "openrouter/free"
-ORCHESTRATOR_MODEL = "liquid/lfm-2.5-2.6b:free"
+ORCHESTRATOR_MODEL = "openrouter/free"
 
 
 set_tracing_disabled(True)

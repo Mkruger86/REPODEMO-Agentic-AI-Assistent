@@ -1,6 +1,6 @@
 from typing import Literal
 
-from agents import Agent, ModelSettings, Runner
+from agents import Agent, ModelSettings, Runner, function_tool
 from pydantic import BaseModel, ConfigDict
 
 from config import orchestrator_model
@@ -18,6 +18,22 @@ class OrchestrationPlan(BaseModel):
     tasks: list[OrchestrationTask]
 
     model_config = ConfigDict(extra="forbid")
+
+
+@function_tool(
+    strict_mode=False,
+    failure_error_function=None,
+)
+def submit_plan(
+    tasks: list[OrchestrationTask],
+) -> str:
+    """Submit the completed orchestration plan."""
+
+    plan = OrchestrationPlan(
+        tasks=tasks,
+    )
+
+    return plan.model_dump_json()
 
 
 ORCHESTRATOR_INSTRUCTIONS = """
@@ -48,6 +64,7 @@ ORCHESTRATION RULES
 - Do not perform the research yourself.
 - Do not perform calendar operations yourself.
 - Do not invent backend components that are not listed above.
+- Submit the completed execution plan using the submit_plan tool.
 """
 
 
@@ -55,8 +72,12 @@ orchestrator = Agent(
     name="Orchestrator",
     instructions=ORCHESTRATOR_INSTRUCTIONS,
     model=orchestrator_model,
-    output_type=OrchestrationPlan,
+    tools=[
+        submit_plan,
+    ],
+    tool_use_behavior="stop_on_first_tool",
     model_settings=ModelSettings(
+        tool_choice="submit_plan",
         extra_body={
             "provider": {
                 "require_parameters": True,
@@ -74,7 +95,9 @@ async def create_plan(
         input=messages,
     )
 
-    return result.final_output
+    return OrchestrationPlan.model_validate_json(
+        result.final_output
+    )
 
 
 if __name__ == "__main__":
@@ -85,4 +108,8 @@ if __name__ == "__main__":
         input=user_input,
     )
 
-    print(result.final_output)
+    plan = OrchestrationPlan.model_validate_json(
+        result.final_output
+    )
+
+    print(plan)
