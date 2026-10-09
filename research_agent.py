@@ -28,6 +28,8 @@ RESEARCH RULES
 
 research_model = ChatOpenRouter(
     model=OPENROUTER_MODEL,
+    timeout=30000,
+    max_retries=0,
 )
 
 
