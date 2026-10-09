@@ -6,7 +6,8 @@ from agents import OpenAIChatCompletionsModel, set_tracing_disabled
 
 OPENROUTER_API_KEY = os.environ["OPENROUTER_API_KEY"]
 
-OPENROUTER_MODEL = "liquid/lfm-2.5-2.6b:free"
+OPENROUTER_MODEL = "openrouter/free"
+ORCHESTRATOR_MODEL = "liquid/lfm-2.5-2.6b:free"
 
 
 set_tracing_disabled(True)
@@ -21,6 +22,6 @@ openrouter_client = AsyncOpenAI(
 
 
 orchestrator_model = OpenAIChatCompletionsModel(
-    model=OPENROUTER_MODEL,
+    model=ORCHESTRATOR_MODEL,
     openai_client=openrouter_client,
 )
