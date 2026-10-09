@@ -1,6 +1,6 @@
 from typing import Literal
 
-from agents import Agent, Runner
+from agents import Agent, ModelSettings, Runner
 from pydantic import BaseModel, ConfigDict
 
 from config import orchestrator_model
@@ -56,6 +56,13 @@ orchestrator = Agent(
     instructions=ORCHESTRATOR_INSTRUCTIONS,
     model=orchestrator_model,
     output_type=OrchestrationPlan,
+    model_settings=ModelSettings(
+        extra_body={
+            "provider": {
+                "require_parameters": True,
+            }
+        }
+    ),
 )
 
 
